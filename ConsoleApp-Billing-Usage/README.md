@@ -15,7 +15,7 @@ To run this sample you will need:
 You will also need to be comfortable with the following tasks:
 
 - Using the [Azure portal](https://manage.windowsazure.com) (or working with your administrator) to do configuration work 
-- Using Git and Github to bring the [sample code](https://github.com/Azure-Samples/billing-dotnet-usage-api/) down to your local machine
+- Using Git and Github to bring the sample code down to your local machine
 - Using Visual Studio to edit configuration files, build, and run the sample
 
 Every Azure subscription has an associated Azure Active Directory (AAD) tenant.  If you don't already have an Azure subscription, you can get a free subscription by signing up at [http://wwww.windowsazure.com](http://www.windowsazure.com).  
@@ -44,7 +44,7 @@ From your shell (ie: Git Bash, etc.) or command line, run the following command 
     git clone https://github.com/Azure-Samples/billing-dotnet-usage-api
 
 ### Step 3:  Edit and Build the sample in Visual Studio
-After you've configured your tenant and downloaded the sample app, you will need to go into the local sub directory in which the Visual Studio solution is stored (typically in <your-git-root-directory>\billing-dotnet-usage-api), and open the ConsoleApp-Billing-Usage.sln Visual Studio solution.  Upon opening, navigate to the app.config file and update the following key/value pairs, using your subscription and AAD specific configuration information from earlier.  NOTE: It's very important that all values match your configuration!
+After you've configured your tenant and downloaded the sample app, you will need to go into the local sub directory in which the Visual Studio solution is stored (typically in `<your-git-root-directory>\billing-dotnet-usage-api)`, and open the `ConsoleApp-Billing-Usage.sln` Visual Studio solution.  Upon opening, navigate to the app.config file and update the following key/value pairs, using your subscription and AAD specific configuration information from earlier.  NOTE: It's very important that all values match your configuration!
 
 	<add key="ADALRedirectURL" value="https://localhost/"/>
 	<add key="TenantDomain" value="ENTER.AZURE.AD.DNS.NAME"/>                           
