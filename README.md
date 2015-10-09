@@ -56,7 +56,7 @@ From your shell (ie: Git Bash, etc.) or command line, run the following command 
     git clone https://github.com/Azure-Samples/billing-dotnet-usage-api
 
 ### Step 3:  Edit and Build the sample in Visual Studio
-After you've configured your tenant and downloaded the sample app, you will need to go into the local sub directory in which the Visual Studio solution is stored (typically in `<your-git-root-directory>\billing-dotnet-usage-api)`, and open the `ConsoleApp-Billing-Usage.sln` Visual Studio solution.  Upon opening, navigate to the app.config file and update the following key/value pairs, using your subscription and AAD specific configuration information from earlier.  NOTE: It's very important that all values match your configuration!
+After you've configured your tenant and downloaded the sample app, you will need to go into the local sub directory in which the Visual Studio solution is stored (typically in `<your-git-root-directory>\billing-dotnet-usage-api\ConsoleApp-Billing-Usage)`, and open the `ConsoleApp-Billing-Usage.sln` Visual Studio solution.  Upon opening, navigate to the app.config file and update the following key/value pairs, using your subscription and AAD specific configuration information from earlier.  NOTE: It's very important that all values match your configuration!
 
 	<add key="ADALRedirectURL" value="https://localhost/"/>
 	<add key="TenantDomain" value="ENTER.AZURE.AD.DNS.NAME"/>                           
