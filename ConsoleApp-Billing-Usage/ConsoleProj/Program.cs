@@ -12,6 +12,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
 using System.Configuration;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ARMAPI_Test
 {
@@ -96,6 +97,95 @@ namespace ARMAPI_Test
             }
 
             return result.AccessToken;
+        }
+
+        /// <summary>
+        /// Method 2 - Fetches the Azure Authentication Token From Azure Active Directory using credentials
+        /// Note: For this method to work follow the section "Authenticate with password - PowerShell" from the below URL
+        /// https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal/
+        /// </summary>
+        /// <param name="TenanatID">Tenanat ID from your Azure Subscription</param>
+        /// <param name="ClientID">GUID for AAD application configured as Native Client App in AAD tenant specified above</param>
+        /// <param name="Password">Password configured for Service Principal</param>
+        /// <returns>Authentication Token</returns>
+        public static string GetOAuthTokenFromAAD_ByCredentials(string TenanatID, string ClientID, string Password)
+        {
+            //Creating the variable for result
+            string token = string.Empty;
+
+            //Creating the Authentication Context
+            var authenticationContext = new AuthenticationContext("https://login.windows.net/" + TenanatID);
+            //Creating Credentials
+            var credential = new ClientCredential(clientId: ClientID, clientSecret: Password);
+            //Fetching Token from Azure AD
+            var result = authenticationContext.AcquireToken(resource: "https://management.core.windows.net/", clientCredential: credential);
+
+            //Checking if data recieved from Azure AD
+            if (result == null)
+            {
+                throw new InvalidOperationException("Failed to obtain the JWT token");
+            }
+
+            //Getting token
+            token = result.AccessToken;
+
+            //Returning the token
+            return token;
+        }
+
+        /// <summary>
+        /// Method 3 - Fetches the Azure Authentication Token From Azure Active Directory using a Certificate
+        /// Note: For this method to work follow the section "Authenticate with certificate - PowerShell" from the below URL
+        /// https://azure.microsoft.com/en-us/documentation/articles/resource-group-authenticate-service-principal/
+        /// </summary>
+        /// <param name="TenanatID">Tenanat ID from your Azure Subscription</param>
+        /// <param name="ClientID">GUID for AAD application configured as Native Client App in AAD tenant specified above</param>
+        /// <param name="CertificateName">Name of certificate. This should be in your local user store on the computer where this tool is run.</param>
+        /// <returns>Authentication Token</returns>
+        public static string GetOAuthTokenFromAAD_ByCertificate(string TenanatID, string ClientID, string CertificateName)
+        {
+            //Creating the Authentication Context
+            var authContext = new AuthenticationContext(string.Format("https://login.windows.net/{0}", TenanatID));
+
+            //Creating the certificate object. This will be used to authenticate
+            X509Certificate2 cert = null;
+
+            //The Certificate should be already installed in personal store of the current user under 
+            //the context of which the application is running.
+            X509Store store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+
+            try
+            {
+                //Trying to open and fetch the certificate
+                store.Open(OpenFlags.ReadOnly);
+                var certCollection = store.Certificates;
+                var certs = certCollection.Find(X509FindType.FindBySubjectName, CertificateName, false);
+                //Checking if certificate found
+                if (certs == null || certs.Count <= 0)
+                {
+                    //Throwing error if certificate not found
+                    throw new Exception("Certificate " + CertificateName + " not found.");
+                }
+                cert = certs[0];
+            }
+            finally
+            {
+                //Closing the certificate store
+                store.Close();
+            }
+
+            //Creating Client Assertion Certificate object
+            var certCred = new ClientAssertionCertificate(ClientID, cert);
+
+            //Fetching the actual token for authentication of every request from Azure using the certificate
+            var token = authContext.AcquireToken("https://management.core.windows.net/", certCred);
+
+            //Optional steps if you need more than just a token from Azure AD
+            //var creds = new TokenCloudCredentials(subscriptionId, token.AccessToken);
+            //var client = new ResourceManagementClient(creds); 
+
+            //Returning the token
+            return token.AccessToken;
         }
   
     }
