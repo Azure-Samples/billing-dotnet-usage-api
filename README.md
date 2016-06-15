@@ -41,7 +41,7 @@ To configure a new AAD application:
 2. Select the AAD tenant you wish to use, and go to the "Applications" page.
 3. From there, you can use the "Add" feature to "Add a new application my organization is developing".
 4. Provide a name (ie: ConsoleApp-Billing-Usage or similar) for the new application.
-5. Be sure to select the "Native Client Application" type, then specify a valid URL for "Redirect URI" (which can be http://localhost/ for the purposes of this sample), and click the check mark to save.
+5. Be sure to select the "Native Client Application" type, then specify a valid URL for "Redirect URI" (which can be https://localhost/ for the purposes of this sample), and click the check mark to save.
 6. After you've added the new application, select it again within the list of applications and click "Configure" so you can make sure the sample app will have permissions to access the Windows Azure Service Management APIs, which is the permission used to secure the Billing APIs.  
 7. Scroll down to the to the "Permissions to other applications" section of your newly created application's configuration page.  Then click the "Add Application" button, select the "Windows Azure Service Management" row, and click the check mark to save.  After saving, hover the "Delegated Permissions" area on the right side of the "Windows Azure Service Management" row, click the "Delegated Permissions" drop down list, select the "Access Azure Service Management (preview)" option, and click "Save" again.
 
