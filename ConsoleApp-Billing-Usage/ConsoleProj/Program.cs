@@ -32,6 +32,7 @@ namespace ARMAPI_Test
              * You can get a list of offer numbers from this URL: http://azure.microsoft.com/en-us/support/legal/offer-details/
              * See the Azure Usage API specification for more details on the query parameters for this API.
              * The Usage Service/API is currently in preview; please use 2016-05-01-preview for api-version
+             * Please see the readme if you are having problems configuring or authenticating: https://github.com/Azure-Samples/billing-dotnet-usage-api
              
             */
             // Build up the HttpWebRequest
@@ -88,7 +89,8 @@ namespace ARMAPI_Test
             //Ask the logged in user to authenticate, so that this client app can get a token on his behalf
             var result = authenticationContext.AcquireToken(String.Format("{0}/", ConfigurationManager.AppSettings["ARMBillingServiceURL"]),
                                                             ConfigurationManager.AppSettings["ClientID"],
-                                                            new Uri(ConfigurationManager.AppSettings["ADALRedirectURL"]));
+                                                            new Uri(ConfigurationManager.AppSettings["ADALRedirectURL"]),
+                                                            PromptBehavior.Always);
 
             if (result == null)
             {

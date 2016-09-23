@@ -59,7 +59,7 @@ From your shell (ie: Git Bash, etc.) or command line, run the following command 
 After you've configured your tenant and downloaded the sample app, you will need to go into the local sub directory in which the Visual Studio solution is stored (typically in `<your-git-root-directory>\billing-dotnet-usage-api\ConsoleApp-Billing-Usage)`, and open the `ConsoleApp-Billing-Usage.sln` Visual Studio solution.  Upon opening, navigate to the app.config file and update the following key/value pairs, using your subscription and AAD specific configuration information from earlier.  NOTE: It's very important that all values match your configuration!
 
 	<add key="ADALRedirectURL" value="https://localhost/"/>
-	<add key="TenantDomain" value="ENTER.AZURE.AD.DNS.NAME"/>                           
+	<add key="TenantDomain" value="ENTER.AAD.TENANT.DNS.NAME"/>                           
 	<add key="SubscriptionID" value="00000000-0000-0000-0000-000000000000"/>
 	<add key="ClientId" value="00000000-0000-0000-0000-000000000000"/>
 
@@ -70,8 +70,34 @@ When you build the solution, it will also restore the missing Nuget packages whi
 When finished with Step 3, you should be able to successfully run the application, which will prompt you for your Azure AD credentials.  Upon successful authentication, the API will be called and the results will be displayed in the console window.  
 
 The application first fetches an access token using credentials of the signed-in user, then calls the Usage API and gets usage data for the requested time range, deserializes it into a payload object (which has a list of the usage aggregates), then prints it to the console. 
+### Troubleshooting
+Below is a list of common errors you may receive, if your application or user account is not configured correctly.
 
-**Note**: The Azure Billing REST APIs are implemented as a Resource Provider as part of the Azure Resource Manager, and therefore share its dependencies.  Access control for Azure Resource Manager uses the built-in Owner, Contributor, and Reader roles, via the Role Based Access Control (RBAC) feature in the [Azure Preview portal](https://portal.azure.com/).  Therefore, you must make sure that the logged-in user is a member of either the ‘Reader’, ‘Owner’ or ‘Contributor’ roles for the specified subscription.  By default, all service administrators are members of the Owner role. For details, see [Role-based access control in the Microsoft Azure portal](https://azure.microsoft.com/documentation/articles/role-based-access-control-configure/).
+**401 Unauthorized** HTTP error  
+This is typically caused by either an invalid SubscriptionID value in the App.config file, or a valid Subscription ID that is not being trusted for authentication by the specified Azure AD tenant (TenantDomain value). 
+
+Make sure the value you enter for SubscriptionID is both a valid subscription and it is associated with the Azure AD tenant you specified for the TenantDomain value. You can verify this in the [Azure classic portal](https://manage.windowsazure.com) by logging in with a service admin/co-admin account for the given subscription, and navigate to the "Settings/Subscriptions" page: 
+
+`https://manage.windowsazure.com/<MyTenantName>.onmicrosoft.com#Workspaces/AdminTasks/SubscriptionMapping`
+
+You should see the GUID for the subscription under the "Subscription ID" column, and the DNS name for your Azure AD tenant under the "Directory" column (shown in a `Friendly-Name (DNS-Name)` format).
+
+For more details on the trust relationship between the Azure subscription and Azure AD, please see [How Azure subscriptions are associated with Azure AD](https://msdn.microsoft.com/library/azure/dn629581.aspx). 
+
+**403 Forbidden** HTTP error  
+The Azure Billing REST APIs are implemented as a Resource Provider as part of the Azure Resource Manager, and therefore share its dependencies.  Access control for Azure Resource Manager uses the built-in "Owner", "Contributor", and "Reader" roles, via the Role Based Access Control (RBAC) feature in the [Azure Portal](https://portal.azure.com/) to secure resources. For details on configuring, see [Role-based access control in the Microsoft Azure portal](https://azure.microsoft.com/documentation/articles/role-based-access-control-configure/). 
+
+There are typically 2 things to look for if you are receiving this error :
+
+- Signed-in user does not belong to specified Azure AD tenant: In order for the application to access your subscription (and billing information), it must obtain an access token from Azure AD. In order for it to obtain an access token, it will prompt you to authenticate using credentials from the Azure AD tenant being trusted by your subscription. 
+
+    As such, make sure you authenticate using credentials from the Azure AD tenant being trusted by your subscription. If you're not sure which Azure AD tenant is being trusted for authentications by your subscriptions, see the "401 Unauthorized" error above for instructions.
+
+- Signed-in user does not belong to correct role: in addition to the above requirement, make the signed-in user is a member of either the ‘Reader’, ‘Owner’ or ‘Contributor’ roles for the specified subscription.  By default, all service administrators are members of the Owner role. If you attempt sign-in with a valid user from the Azure AD tenant being trusted by the subscription, but don't configure role membership correctly, you may experience a "401 Unauthorized" error.
+
+**AADSTS65005** Azure AD exception  
+This error is typically caused by incorrect or missing permission requests in the application's configuration. See steps #1.6 and #1.7 above for more information.
+
 
 ## Need Help?
 
