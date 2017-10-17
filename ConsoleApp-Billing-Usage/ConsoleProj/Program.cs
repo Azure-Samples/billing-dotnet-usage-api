@@ -31,7 +31,7 @@ namespace ARMAPI_Test
              * See the App.config file for all AppSettings key/value pairs
              * You can get a list of offer numbers from this URL: http://azure.microsoft.com/en-us/support/legal/offer-details/
              * See the Azure Usage API specification for more details on the query parameters for this API.
-             * The Usage Service/API is currently in preview; please use 2016-05-01-preview for api-version
+             * The Usage Service/API is currently in preview; please use 2015-06-01-preview for api-version
              * Please see the readme if you are having problems configuring or authenticating: https://github.com/Azure-Samples/billing-dotnet-usage-api
              
             */
